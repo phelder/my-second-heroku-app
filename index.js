@@ -32,6 +32,33 @@ app.get('/dbtest', function(req, res) {
     })
 })
 
+app.get('/api/employees', function(req, res) {
+
+    connection.query(`SELECT * FROM employees`, function(error, result) {
+    
+        res.json(result)
+    
+    })
+})
+
+app.get('/api/employees/:id', function(req, res) {
+
+    const id = req.params.id
+
+    connection.query(`SELECT * FROM employees WHERE employeeNumber = ?`, [id], function(error, result) {
+        
+        if (error) {
+            res.json({
+                status: 'error',
+                description: `it's an error, try again later`
+            })
+        }
+
+        res.json(result)
+    
+    })
+})
+
 app.listen(port, function() {
     console.log(`running on port ${port}`)
 })
