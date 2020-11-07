@@ -1,62 +1,106 @@
 require('dotenv').config()
-
 const express = require('express')
-const mysql = require('mysql2')
+const bodyParser = require('body-parser')
+const offices = require('./offices')
 
 const app = express()
 const port = process.env.PORT
 
-const connection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME
-})
+app.use(bodyParser.json())
+
+
 
 app.get('/', function(req, res) {
 
-    console.log(`A requeste was madde to the home endpoint!`)
-
-    res.json({
-        status: 'ok',
-        description: `it's ok what else can I say...`
-    })
+    res.json([
+        {
+            offices: ['GET /api/offices', 'GET /api/offices/:id', 'POST /api/offices', 'PUT /api/offices/:id', 'DELETE /api/offices/:id']
+        },
+        {
+            employees: ['homework?']
+        }
+    ])
 })
 
-app.get('/dbtest', function(req, res) {
+app.get('/api/offices', function(req, res) {
 
-    connection.query(`SELECT * FROM offices`, function(error, result) {
-    
-        res.json(result)
-    
+    offices.findAll().then(function(response) {
+        res.json(response)
+    }).catch(function(error) {
+        res.status(400).send()
     })
+
 })
 
-app.get('/api/employees', function(req, res) {
-
-    connection.query(`SELECT * FROM employees`, function(error, result) {
-    
-        res.json(result)
-    
-    })
-})
-
-app.get('/api/employees/:id', function(req, res) {
+app.get('/api/offices/:id', function(req, res) {
 
     const id = req.params.id
 
-    connection.query(`SELECT * FROM employees WHERE employeeNumber = ?`, [id], function(error, result) {
-        
-        if (error) {
-            res.json({
-                status: 'error',
-                description: `it's an error, try again later`
-            })
-        }
-
-        res.json(result)
-    
+    offices.findById(id).then(function(response) {
+        res.json(response)
+    }).catch(function(error) {
+        res.status(400).send()
     })
+    
+})
+
+app.post('/api/offices', function(req, res) {
+
+    const office = {
+        officeCode: req.body.officeCode,
+        city: req.body.city,
+        phone: req.body.phone,
+        addressLine1: req.body.addressLine1,
+        addressLine2: req.body.addressLine2,
+        state: req.body.state,
+        country: req.body.country,
+        postalCode: req.body.postalCode,
+        territory: req.body.territory
+    }
+
+    offices.insert(office).then(function(response) {
+        res.json(response)
+    }).catch(function(error) {
+        res.status(400).send()
+    })
+
+})
+
+app.put('/api/offices/:id', function(req, res) {
+
+    const id = req.params.id
+
+    const office = {
+        officeCode: id,
+        city: req.body.city,
+        phone: req.body.phone,
+        addressLine1: req.body.addressLine1,
+        addressLine2: req.body.addressLine2,
+        state: req.body.state,
+        country: req.body.country,
+        postalCode: req.body.postalCode,
+        territory: req.body.territory
+    }
+
+    offices.update(office).then(function(response) {
+        res.json(response)
+    }).catch(function(error) {
+        res.status(400).send()
+    })
+
+})
+
+
+app.delete('/api/offices/:id', function(req, res) {
+
+    const id = req.params.id
+
+    offices.delete(id).then(function(response) {
+        res.json(response)
+    }).catch(function(error) {
+        res.status(400).send()
+    })
+
 })
 
 app.listen(port, function() {
