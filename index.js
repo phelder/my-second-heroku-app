@@ -21,7 +21,7 @@ const corsOptions = {
         }
     }
 }
-// app.use(cors(corsOptions))
+app.use(cors(corsOptions))
 
 app.get('/', function (req, res) {
     console.log(req.hostname);
