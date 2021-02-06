@@ -11,7 +11,7 @@ app.use(bodyParser.json())
 
 
 
-const whitelist = ['http://example1.com', 'http://example2.com']
+const whitelist = ['http://example1.com', 'http://example2.com', 'https://distilando-v1.netlify.app']
 const corsOptions = {
     origin: function (origin, callback) {
         if (whitelist.indexOf(origin) !== -1) {
