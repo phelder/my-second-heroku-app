@@ -25,6 +25,8 @@ app.use(cors(corsOptions))
 
 app.get('/', function (req, res) {
     console.log(req.hostname);
+    console.log(req.get('host'));
+    console.log(req.get('origin'));
     res.send("hi");
 })
 
