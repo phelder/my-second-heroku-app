@@ -8,7 +8,20 @@ const app = express()
 const port = process.env.PORT
 
 app.use(bodyParser.json())
-app.use(cors())
+
+
+
+const whitelist = ['http://example1.com', 'http://example2.com']
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1) {
+            callback(null, true)
+        } else {
+            callback(new Error('Not allowed by CORS'))
+        }
+    }
+}
+app.use(cors(corsOptions))
 
 app.get('/', function (req, res) {
     console.log(req.hostname);
